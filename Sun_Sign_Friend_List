@@ -1,0 +1,95 @@
+import requests
+from collections import Counter
+
+raw_data = []
+
+def calendar_download():
+	# Get your URL from facebook and replace below
+	# SERIOUSLY JUST COPY AND PASTE FROM FACEBOOK
+  url = 'https://www.facebook.com/events/ical/birthdays/?uid=1067730042&key=AQBXYHx8Mh2IdKMF'
+	print("Starting...")
+	#Open downloaded calendar file
+	data = requests.get(url)
+	#Append all data into a single continuous string
+	text_data = data.content
+  #decodes the file to a string
+	text_data = text_data.decode("utf-8")
+	#Splits the data based on line breaks
+  data = text_data.split('\n')
+  # Creates separate items in the list
+	raw_data.extend(data)
+	return text_data
+
+#runs the above function
+calendar_download()
+
+#empty list to fill with cleaned data
+raw_birthdays = []
+
+#Populates raw_birthdays with just the birthdays
+for line in raw_data:
+	if "DTSTART" in line:
+		raw_birthdays.append(line)
+
+#list of bad characters to strip from raw_birthdays
+bad_chars = ["DTSTART:", "2019", "2020", "\r"]
+
+#function to remove bad text
+def strip_characters(string):
+   for char in bad_chars:
+       string = string.replace(char,"")
+   return string
+
+#cleaned list without lines that do not matter
+Stripped_Birthday_List = []
+
+#fills the cleaned list
+for s in raw_birthdays:
+   s = strip_characters(s)
+   Stripped_Birthday_List.append(s)
+
+#makes the formally string values integers
+Stripped_Birthday_List = list(map(int, Stripped_Birthday_List))
+
+#empty lists to append 
+sunsign = []
+element = []
+
+#function to
+def convert_to_sun_sign (s):
+   for line in s:
+       if line in range(321, 420):
+           sunsign.append("Aries"), element.append("Fire")
+       elif line in range(421, 521):
+           sunsign.append("Taurus"), element.append("Earth")
+       elif line in range(522, 621):
+           sunsign.append("Gemini"), element.append("Air")
+       elif line in range(622, 722):
+           sunsign.append("Cancer"),element.append("Water")
+       elif line in range(723, 822):
+           sunsign.append("Leo"), element.append("Fire")
+       elif line in range(823, 923):
+           sunsign.append("Virgo"), element.append("Earth")
+       elif line in range(924, 1023):
+           sunsign.append("Libra"), element.append("Air")
+       elif line in range(1024, 1122):
+           sunsign.append("Scorpio"), element.append("Water")
+       elif line in range(1123, 1222):
+           sunsign.append("Sagittarius"), element.append("Fire")
+       elif line >=1223:
+           sunsign.append("Capricorn"), element.append("Earth")
+       elif line <=120:
+           sunsign.append("Capricorn"), element.append("Earth")
+       elif line in range(121, 219):
+           sunsign.append("Aquarius"), element.append("Air")
+       elif line in range (220, 320):
+           sunsign.append("Pisces"), element.append("Water")
+
+#runs the above
+convert_to_sun_sign(Stripped_Birthday_List)
+
+#outputs the sunsign and elements 
+Sun_output = Counter(sunsign)
+Element_output = Counter(element)
+
+print(Sun_output, Element_output)
